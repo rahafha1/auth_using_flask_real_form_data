@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>User Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="card">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-messages">
+              {% for category, message in messages %}
+                <p class="{{ category }}">{{ message }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <h1>{{ user.name }}</h1>
+        <p class="title">{{ user.email }}</p>
+        <p>Registered on: {{ user.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+        
+        <div class="token-container">
+            <p><strong>Access Token:</strong></p>
+            <textarea readonly>{{ token }}</textarea>
+        </div>
+
+        <!-- شكل زر تسجيل الخروج كما كان في الكود الأصلي، مع إرسال POST لإتمام تسجيل الخروج -->
+        <form action="{{ url_for('auth.logout') }}" method="POST">
+            <input type="submit" value="Logout" />
+        </form>
+    </div>
+    <script>
+// زر الخروج يمسح التوكن من التخزين المحلي
+const logoutForm = document.querySelector("form[action='/auth/logout']")
+logoutForm.addEventListener("submit", (e) => {
+  localStorage.removeItem("token");
+});
+
+// إذا التوكن ظاهر (عند التسجيل)، خزنه في localStorage
+const tokenText = document.querySelector(".token-container textarea")
+if (tokenText && tokenText.textContent.trim()) {
+  localStorage.setItem("token", tokenText.textContent.trim())
+}
+</script>
+</body>
+</html>
+
+
+
+
+ 
